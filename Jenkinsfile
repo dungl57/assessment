@@ -56,6 +56,7 @@ pipeline {
                                 sh 'git config --global user.name "Jenkins CI"'
                                 sh 'git add ./k8s-manifest/deployment.yaml'
                                 sh "git commit -m 'Update deployment image to ${NEW_IMAGE_NAME}'"
+                                sh "git config --global credential.helper jenkins"
                                 sh "git push https://github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:dev"
                         } else {
                             echo "No changes to deployment.yaml, skipping commit and push."
