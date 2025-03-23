@@ -1,0 +1,21 @@
+environment = "dev"
+cluster_name = "dev-cluster"
+region = "ap-southeast-1"
+vpc_id = "vpc-0f397d7e79f2f9cd1"
+subnet_ids = ["subnet-0b85228ca6d947aaf", "subnet-0b6f4a4d9029893e7"]
+enabled_cluster_log_types = ["api", "audit", "authenticator"]
+cluster_encryption_cmk_arn = "arn:aws:kms:ap-southeast-1:790914640527:key/dc094005-b619-42a7-a256-76604e4a74f3"
+endpoint_private_access = false
+endpoint_public_access = true
+control_plane_allowed_ip_ranges = ["0.0.0.0/0"]
+node_group_subnet_ids = ["subnet-0b85228ca6d947aaf", "subnet-0b6f4a4d9029893e7"]
+node_group_desired_size = 2
+node_group_min_size     = 1
+node_group_max_size     = 5
+node_group_instance_types = ["t3.medium"]
+node_group_disk_size      = 20
+kubernetes_version = 1.32
+default_tags = {
+  Owner       = "DevOps"
+  Environment = "dev"
+}
