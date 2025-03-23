@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     // Use withCredentials for GitHub credentials
-                    withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USER_NAME', passwordVariable: 'GIT_PASSWORD')]) {
                         // Use the full image name with tag
                         def NEW_IMAGE_NAME = "${DOCKER_HUB_REPO}:${BUILD_NUMBER}" // FIX 1: Add 'def'
 
