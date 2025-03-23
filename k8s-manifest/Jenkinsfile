@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'DOCKER_TAG', defaultValue: 'latest', description: 'Docker image tag to deploy')
+        string(name: 'GIT_BRANCH', defaultValue: 'dev', description: 'Git branch to deploy from')
+    }
+
+    environment {
+        AWS_REGION = 'ap-southeast-1'
+        CLUSTER_NAME = 'dev-cluster'
+        GIT_REPO_URL = 'https://github.com/dungl57/assessment.git'
+        MANIFEST_PATH = './k8s-manifest'
+    }
+
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                git branch: "${params.GIT_BRANCH}", 
+                    credentialsId: 'github', 
+                    url: "${GIT_REPO_URL}"
+            }
+        }
+
+        stage('Configure AWS & Kubernetes') {
+            steps {
+                script {
+                    withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
+                        sh """
+                            aws eks update-kubeconfig --name ${CLUSTER_NAME} --region ${AWS_REGION}
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
+                        dir("${MANIFEST_PATH}") {
+                            // Apply kubernetes manifests
+                            sh """
+                                kubectl apply -f deployment.yaml
+                                kubectl apply -f service.yaml
+                            """
+                            
+                            // Wait for deployment to complete
+                            sh """
+                                kubectl rollout status deployment/weather-app -n default
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Successfully deployed image with tag: ${params.DOCKER_TAG}"
+        }
+        failure {
+            echo 'Deployment to EKS failed!'
+        }
+    }
+}
