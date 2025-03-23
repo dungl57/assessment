@@ -33,7 +33,7 @@ pipeline{
                        sh "sed -i 's|image: .*|image: $NEW_IMAGE_NAME|' ./k8s-manifest/deployment.yaml"
                        sh 'git add ./k8s-manifest/deployment.yaml'
                        sh "git commit -m 'Update deployment image to $NEW_IMAGE_NAME'"
-                       sh "git push @github.com/${GIT_USER_NAME}/${GIT_REPO_NAME">https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:dev"
+                       sh "git push https://${GIT_USER}:${GIT_PASSWORD}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:dev"
                     }
                 }
              }
