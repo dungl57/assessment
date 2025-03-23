@@ -18,12 +18,9 @@ pipeline{
         stage('Docker Build & Push') {
             steps {
                 script {
-                    // Use Docker credentials to log in and push the image
-                    withDockerRegistry(credentialsId: docker, url: 'https://hub.docker.com/repository/docker/jaesukdo/web-weather/general') {
-                        // Build the Docker image
-                        sh "docker build -t ${DOCKER_HUB_REPO}:latest ."
-                        // Push the Docker image to Docker Hub
-                        sh "docker push ${DOCKER_HUB_REPO}:latest"
+                    withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
+                        def app = docker.build('jaesukdo/web-weather')
+                        app.push('latest')
                     }
                 }
             }
