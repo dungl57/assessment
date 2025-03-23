@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     // Use withCredentials for Docker Hub credentials
-                    withDockerRegistry([credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/']) {
+                    withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
                         sh "docker build -t ${DOCKER_HUB_REPO} ."
                         sh "docker tag ${DOCKER_HUB_REPO} ${DOCKER_HUB_REPO}:${BUILD_NUMBER}"
                         sh "docker push ${DOCKER_HUB_REPO}:${BUILD_NUMBER}"
