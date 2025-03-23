@@ -15,11 +15,6 @@ pipeline{
                 git branch: 'dev', url: 'https://github.com/dungl57/assessment.git'
             }
         }
-        stage('Install Dependencies') {
-            steps {
-                sh "npm install"
-            }
-        }
         stage('Docker Build & Push') {
             steps {
                 script {
