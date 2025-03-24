@@ -15,3 +15,41 @@ module "eks" {
   control_plane_allowed_ip_ranges = var.control_plane_allowed_ip_ranges
   default_tags                 = var.default_tags
 }
+
+# Configure the Kubernetes provider
+provider "kubernetes" {
+  host                   = module.eks.eks_cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args        = ["eks", "get-token", "--cluster-name", var.cluster_name]
+    command     = "aws"
+  }
+
+}
+
+# Resource to update kubeconfig
+resource "null_resource" "update_kubeconfig" {
+  provisioner "local-exec" {
+    command = "aws eks update-kubeconfig --name ${var.cluster_name} --region ${var.region}"
+  }
+
+  depends_on = [module.eks]
+}
+
+# Set up the Vertical Pod Autoscaler
+resource "null_resource" "install_vpa" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      # Create and navigate to temporary directory for VPA installation
+      TMP_DIR=$(mktemp -d)
+      cd $TMP_DIR
+      git clone https://github.com/kubernetes/autoscaler.git
+      cd autoscaler/vertical-pod-autoscaler
+      bash hack/vpa-up.sh
+      rm -rf $TMP_DIR
+    EOT
+  }
+
+  depends_on = [null_resource.update_kubeconfig]
+}
