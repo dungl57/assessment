@@ -17,7 +17,7 @@ pipeline {
 
         stage('Checkout from Git') {
             steps {
-                git branch: 'dev', 
+                git branch: 'CI/CD', 
                     credentialsId: 'github', 
                     url: 'https://github.com/dungl57/assessment.git'
             }
@@ -41,8 +41,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASSWORD')]) {
                         def NEW_IMAGE_NAME = "${DOCKER_HUB_REPO}:${BUILD_NUMBER}"
 
-                        sh "git checkout dev"
-                        sh "git pull origin dev"
+                        sh "git checkout CI/CD"
+                        sh "git pull origin CI/CD"
                         sh "sed -i 's|image: .*|image: ${NEW_IMAGE_NAME}|' ./k8s-manifest/deployment.yaml"
 
                         if (sh(returnStatus: true, script: "git diff --quiet --exit-code ./k8s-manifest/deployment.yaml") != 0) {
@@ -52,7 +52,7 @@ pipeline {
                             sh "git commit -m 'Update deployment image to ${NEW_IMAGE_NAME}'"
                             
                             sh """
-                                git push https://${GIT_USER}:${GIT_PASSWORD}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:dev
+                                git push https://${GIT_USER}:${GIT_PASSWORD}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:CI/CD
                             """
 
                             // Trigger deployment pipeline
