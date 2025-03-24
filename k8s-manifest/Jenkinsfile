@@ -76,6 +76,7 @@ pipeline {
                 script {
                     sh '''
                     echo "Authenticating with EKS Cluster..."
+                    aws sts get-caller-identity
                     aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}
                     '''
                 }
