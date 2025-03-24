@@ -60,7 +60,7 @@ pipeline {
                                   wait: false, 
                                   parameters: [
                                       string(name: 'DOCKER_TAG', value: "${BUILD_NUMBER}"),
-                                      string(name: 'GIT_BRANCH', value: 'dev'),
+                                      string(name: 'GIT_BRANCH', value: 'CI/CD'),
                                       string(name: 'DEPLOYMENT_PATH', value: './k8s-manifest/deployment.yaml')
                                   ]
                         } else {
