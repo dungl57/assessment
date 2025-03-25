@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: weather-app
-        image: jaesukdo/web-weather:27
+        image: jaesukdo/web-weather:30
         ports:
         - containerPort: 3000
         env:
