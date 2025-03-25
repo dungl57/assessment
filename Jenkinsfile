@@ -8,6 +8,13 @@ pipeline {
         DEPLOY_JOB_NAME = 'deploy-to-eks'
     }
 
+    triggers {
+        pollSCM(ignorePostCommitHooks: false, scmClass: 'hudson.plugins.git.GitSCM') {
+            excludeMessage('.*\\[ci skip\\].*')
+            excludePath('k8s-manifest/.*')
+        }
+    }
+
     stages {
         stage('Clean Workspace') {
             steps {
